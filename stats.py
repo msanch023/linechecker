@@ -9,20 +9,7 @@ def data(url):
 
     return tables[0]
 
-def player_stats(player_name):
-
-    urls = {
-        'player_stats': 'https://www.teamrankings.com/nba/player/' + player_name
-    }
-
-    games_played = data(urls['player_stats'])
-
-    player_games_played = games_played.loc[0]['G']
-    player_total_points = games_played.loc[0]['PTS']
-
-    return player_games_played, player_total_points
-
-
+# %%
 def team_stats(team_name, location='Home'):
 
     urls = {
@@ -37,11 +24,24 @@ def team_stats(team_name, location='Home'):
     if location == 'Home':
         opp_location = 'Away'
 
-    team_avg = team_ppg_df.loc[team_ppg_df['Team'] == team_name, '2024'].values[0]
-    team_l3 = team_ppg_df.loc[team_ppg_df['Team'] == team_name, 'Last 3'].values[0]
-    team_location_avg = team_ppg_df.loc[team_ppg_df['Team'] == team_name, location].values[0]
-    opp_avg_allowed = opp_ppg_df.loc[opp_ppg_df['Team'] == team_name, '2024'].values[0]
-    opp_l3_allowed = opp_ppg_df.loc[opp_ppg_df['Team'] == team_name, 'Last 3'].values[0]
-    opp_location_avg = opp_ppg_df.loc[opp_ppg_df['Team'] == team_name, opp_location].values[0]
+    team_avg = team_ppg_df.loc[team_ppg_df['Team'].str.contains(team_name, case=False), '2024'].values[0]
+    team_l3 = team_ppg_df.loc[team_ppg_df['Team'].str.contains(team_name, case=False), 'Last 3'].values[0]
+    team_location_avg = team_ppg_df.loc[team_ppg_df['Team'].str.contains(team_name, case=False), location].values[0]
+    opp_avg_allowed = opp_ppg_df.loc[opp_ppg_df['Team'].str.contains(team_name, case=False), '2024'].values[0]
+    opp_l3_allowed = opp_ppg_df.loc[opp_ppg_df['Team'].str.contains(team_name, case=False), 'Last 3'].values[0]
+    opp_location_avg = opp_ppg_df.loc[opp_ppg_df['Team'].str.contains(team_name, case=False), opp_location].values[0]
 
     return team_avg, team_l3, team_location_avg, opp_avg_allowed, opp_l3_allowed, opp_location_avg
+
+# %%
+def whole_team(team_name):
+    url = 'https://www.teamrankings.com/nba/player-stat/points'
+    df = data(url)
+    team_data = df[df['Team'].str.contains(team_name, case=False)].values
+
+    lines = {}
+
+    for player in team_data:
+        lines[player[1]] = player[4]
+
+    return lines
