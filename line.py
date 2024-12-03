@@ -23,4 +23,4 @@ def pred_line(team_name, location):
 
     return lines
 
-pred_line('lakers', 'Home')
+pred_line('san antonio', 'Away')
